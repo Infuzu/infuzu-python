@@ -1,4 +1,4 @@
-from infuzu import create_chat_completion, ChatCompletionsHandlerRequestMessage
+from src.infuzu import create_chat_completion, ChatCompletionsHandlerRequestMessage
 from dotenv import load_dotenv
 
 

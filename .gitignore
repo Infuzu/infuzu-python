@@ -25,14 +25,9 @@ pip-wheel-metadata/
 MANIFEST.in
 release/
 
-# PyInstaller
-#  Usually these files are written into a dist/ directory.
-#  But the directory is not created if you explicitly specify where to
-#  put the build.
 build
 dist
 
-# Unit test / coverage reports
 htmlcov/
 .tox/
 .coverage
@@ -43,7 +38,6 @@ coverage.xml
 *.log
 .pytest_cache/
 
-# Environments
 .env
 .venv
 env/

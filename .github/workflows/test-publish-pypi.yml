@@ -58,12 +58,9 @@ jobs:
 
       - name: Build Package
         run: hatch build
-        env:
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
 
       - name: Publish to PyPI
         run: hatch publish
         env:
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           HATCH_INDEX_USER: __token__
           HATCH_INDEX_PASSWORD: ${{ secrets.PYPI_TOKEN }}

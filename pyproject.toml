@@ -32,9 +32,7 @@ keywords = [
 ]
 
 [tool.hatch.version]
-source = "environment"
-path = "PACKAGE_VERSION"
-fallback = "0.1.0-alpha"
+source = "versioningit"
 
 [project.urls]
 Homepage = "https://github.com/Infuzu/infuzu-python"
@@ -48,7 +46,7 @@ include = [
 ]
 
 [build-system]
-requires = ["hatchling", "hatch-fancy-pypi-readme"]
+requires = ["hatchling", "hatch-fancy-pypi-readme", "versioningit"]
 build-backend = "hatchling.build"
 
 [tool.hatch.metadata.hooks.fancy-pypi-readme]

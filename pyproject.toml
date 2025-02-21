@@ -31,9 +31,6 @@ keywords = [
     "chat", "sdk", "api", "infuzu", "ims", "intelligent model selection", "python", "ai", "artificial intelligence"
 ]
 
-[tool.hatch.version]
-source = "standard"
-
 [project.urls]
 Homepage = "https://github.com/Infuzu/infuzu-python"
 Repository = "https://infuzu.com#api"

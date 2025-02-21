@@ -49,13 +49,15 @@ jobs:
 
       - name: Update Package Version File
         run: |
-          echo "PACKAGE_VERSION" > .package-version
+          echo "$PACKAGE_VERSION" > .package-version
+          git config --global --add safe.directory /github/workspace
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+          git branch --track main origin/main || true
           git checkout main
           git add .package-version
-          git commit -m "Update package version to PACKAGE_VERSION [skip ci]"
-          git push origin main
+          git commit -m "Update package version to $PACKAGE_VERSION [skip ci]"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} main
 
       - name: Build Package
         run: hatch build

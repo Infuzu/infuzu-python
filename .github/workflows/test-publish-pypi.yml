@@ -28,7 +28,7 @@ jobs:
 
       - name: Run tests
         run: |
-          hatch run test
+          hatch run -e test test
 
   publish:
     name: Publish to PyPI

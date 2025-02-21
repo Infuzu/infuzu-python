@@ -63,6 +63,18 @@ include = ["src/*", "README.md", "LICENSE"]
 [tool.hatch.build.targets.wheel]
 packages = ["src/infuzu"]
 
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0"
+]
+
+[tool.hatch.envs.default]
+dependencies = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0"
+]
+
 [tool.hatch.envs.test]
 dependencies = [
     "pytest>=7.0.0",

@@ -67,7 +67,4 @@ jobs:
         run: hatch build
 
       - name: Publish to PyPI
-        run: hatch publish
-        env:
-          HATCH_INDEX_USER: __token__
-          HATCH_INDEX_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: hatch publish --user __token__ --auth ${{ secrets.PYPI_TOKEN }}

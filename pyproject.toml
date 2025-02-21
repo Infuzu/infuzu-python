@@ -32,7 +32,9 @@ keywords = [
 ]
 
 [tool.hatch.version]
-source = "versioningit"
+source = "regex"
+path = ".project-version"
+pattern = "^(?P<version>\d+\.\d+\.\d+)"
 
 [project.urls]
 Homepage = "https://github.com/Infuzu/infuzu-python"
@@ -46,7 +48,7 @@ include = [
 ]
 
 [build-system]
-requires = ["hatchling", "hatch-fancy-pypi-readme", "versioningit"]
+requires = ["hatchling", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"
 
 [tool.hatch.metadata.hooks.fancy-pypi-readme]

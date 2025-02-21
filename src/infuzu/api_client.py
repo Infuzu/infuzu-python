@@ -10,6 +10,9 @@ class ModelWeights(BaseModel):
     start_latency: Optional[float] = None
     end_latency: Optional[float] = None
 
+    class Config:
+        extra: str = "allow"
+
 
 class InfuzuModelParams(BaseModel):
     llms: Optional[List[str]] = None
@@ -19,12 +22,18 @@ class InfuzuModelParams(BaseModel):
     max_input_cost: Optional[float] = None
     max_output_cost: Optional[float] = None
 
+    class Config:
+        extra: str = "allow"
+
 
 class ChatCompletionsRequestContentPart(BaseModel):
     type: str
     text: Optional[str] = None
     image_url: Optional[str] = None
     input_audio: Optional[str] = None
+
+    class Config:
+        extra: str = "allow"
 
     @validator("text", always=True)
     def check_content_fields(cls, value, values):
@@ -41,6 +50,9 @@ class ChatCompletionsHandlerRequestMessage(BaseModel):
     content: Union[str, List[ChatCompletionsRequestContentPart]]
     role: str
     name: Optional[str] = None
+
+    class Config:
+        extra: str = "allow"
 
     @validator('role')
     def role_must_be_valid(cls, v):

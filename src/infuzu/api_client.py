@@ -2,6 +2,7 @@ import httpx
 import os
 from typing import (Optional, Dict, Union, List)
 from pydantic import (BaseModel, validator)
+from .errors import InfuzuAPIError
 
 
 class ModelWeights(BaseModel):
@@ -123,11 +124,4 @@ def create_chat_completion(
         return response.json()
 
     except httpx.HTTPStatusError as e:
-        print(f"HTTP Error: {e}")
-        raise
-    except httpx.RequestError as e:
-        print(f"Request Error: {e}")
-        raise
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        raise
+        raise InfuzuAPIError(e)

@@ -38,6 +38,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install build tools
         run: pip install hatch
@@ -45,8 +47,14 @@ jobs:
       - name: Extract Version from tag
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
-      - name: Update package version
-        run: hatch version $VERSION
+      - name: Update Package Version File
+        run: |
+          echo "$VERSION" > .package-version
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add .package-version
+          git commit -m "Update package version to $VERSION [skip ci]"
+          git push
 
       - name: Build Package
         run: hatch build

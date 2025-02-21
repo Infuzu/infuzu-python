@@ -2,6 +2,7 @@ import httpx
 import os
 from typing import (Optional, Dict, Union, List)
 from pydantic import (BaseModel, validator)
+from .errors import InfuzuAPIError
 
 
 class ModelWeights(BaseModel):
@@ -9,6 +10,9 @@ class ModelWeights(BaseModel):
     error: Optional[float] = None
     start_latency: Optional[float] = None
     end_latency: Optional[float] = None
+
+    class Config:
+        extra: str = "allow"
 
 
 class InfuzuModelParams(BaseModel):
@@ -19,12 +23,18 @@ class InfuzuModelParams(BaseModel):
     max_input_cost: Optional[float] = None
     max_output_cost: Optional[float] = None
 
+    class Config:
+        extra: str = "allow"
+
 
 class ChatCompletionsRequestContentPart(BaseModel):
     type: str
     text: Optional[str] = None
     image_url: Optional[str] = None
     input_audio: Optional[str] = None
+
+    class Config:
+        extra: str = "allow"
 
     @validator("text", always=True)
     def check_content_fields(cls, value, values):
@@ -41,6 +51,9 @@ class ChatCompletionsHandlerRequestMessage(BaseModel):
     content: Union[str, List[ChatCompletionsRequestContentPart]]
     role: str
     name: Optional[str] = None
+
+    class Config:
+        extra: str = "allow"
 
     @validator('role')
     def role_must_be_valid(cls, v):
@@ -111,11 +124,4 @@ def create_chat_completion(
         return response.json()
 
     except httpx.HTTPStatusError as e:
-        print(f"HTTP Error: {e}")
-        raise
-    except httpx.RequestError as e:
-        print(f"Request Error: {e}")
-        raise
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        raise
+        raise InfuzuAPIError(e)

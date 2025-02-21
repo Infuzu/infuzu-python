@@ -32,8 +32,9 @@ keywords = [
 ]
 
 [tool.hatch.version]
-source = "file"
-path = ".package-version"
+source = "environment"
+path = "PACKAGE_VERSION"
+fallback = "0.1.0-alpha"
 
 [project.urls]
 Homepage = "https://github.com/Infuzu/infuzu-python"

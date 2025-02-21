@@ -45,22 +45,25 @@ jobs:
         run: pip install hatch
 
       - name: Extract Version from tag
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+        run: echo "PACKAGE_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
       - name: Update Package Version File
         run: |
-          echo "$VERSION" > .package-version
+          echo "PACKAGE_VERSION" > .package-version
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add .package-version
-          git commit -m "Update package version to $VERSION [skip ci]"
+          git commit -m "Update package version to PACKAGE_VERSION [skip ci]"
           git push
 
       - name: Build Package
         run: hatch build
+        env:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
 
       - name: Publish to PyPI
         run: hatch publish
         env:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           HATCH_INDEX_USER: __token__
           HATCH_INDEX_PASSWORD: ${{ secrets.PYPI_TOKEN }}

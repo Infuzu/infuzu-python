@@ -4,7 +4,7 @@ import uuid
 import httpx
 import os
 from typing import (Optional, Dict, Union, List)
-from pydantic import (BaseModel, validator, Field, ConfigDict, model_validator)
+from pydantic import (BaseModel, Field, ConfigDict, model_validator)
 from .utils import get_version
 from .errors import InfuzuAPIError
 

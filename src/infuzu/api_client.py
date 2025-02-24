@@ -4,22 +4,23 @@ import uuid
 import httpx
 import os
 from typing import (Optional, Dict, Union, List)
-from pydantic import (BaseModel, validator, Field)
+from pydantic import (BaseModel, validator, Field, ConfigDict)
 from .utils import get_version
 from .errors import InfuzuAPIError
 
 
 class ModelWeights(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     price: Optional[float] = None
     error: Optional[float] = None
     start_latency: Optional[float] = None
     end_latency: Optional[float] = None
 
-    class Config:
-        extra: str = "allow"
-
 
 class InfuzuModelParams(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     llms: Optional[List[str]] = None
     exclude_llms: Optional[List[str]] = None
     weights: Optional[ModelWeights] = None
@@ -27,18 +28,14 @@ class InfuzuModelParams(BaseModel):
     max_input_cost: Optional[float] = None
     max_output_cost: Optional[float] = None
 
-    class Config:
-        extra: str = "allow"
-
 
 class ChatCompletionsRequestContentPart(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     type: str
     text: Optional[str] = None
     image_url: Optional[str] = None
     input_audio: Optional[str] = None
-
-    class Config:
-        extra: str = "allow"
 
     @validator("text", always=True)
     def check_content_fields(cls, value, values):
@@ -52,12 +49,11 @@ class ChatCompletionsRequestContentPart(BaseModel):
 
 
 class ChatCompletionsHandlerRequestMessage(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     content: Union[str, List[ChatCompletionsRequestContentPart]]
     role: str
     name: Optional[str] = None
-
-    class Config:
-        extra: str = "allow"
 
     @validator('role')
     def role_must_be_valid(cls, v):
@@ -67,41 +63,39 @@ class ChatCompletionsHandlerRequestMessage(BaseModel):
 
 
 class ChatCompletionsChoiceMessageAudioObject(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     id: Optional[str] = None
     expired_at: Optional[int] = None
     data: Optional[str] = None
     transcript: Optional[str] = None
 
-    class Config:
-        extra: str = "allow"
-
 
 class ChatCompletionsChoiceMessageFunctionCallObject(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     name: Optional[str] = None
     arguments: Optional[str] = None
-
-    class Config:
-        extra: str = "allow"
 
 
 class ChatCompletionsChoiceMessageToolCallFunctionObject(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     name: Optional[str] = None
     arguments: Optional[str] = None
 
-    class Config:
-        extra: str = "allow"
-
 
 class chatCompletionsChoiceMessageToolCallObject(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     id: Optional[str] = None
     type: Optional[str] = None
     function: Optional[ChatCompletionsChoiceMessageToolCallFunctionObject] = None
 
-    class Config:
-        extra: str = "allow"
-
 
 class ChatCompletionsChoiceMessageObject(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     content: Optional[str] = None
     refusal: Optional[str] = None
     tool_calls: Optional[List[chatCompletionsChoiceMessageToolCallObject]] = None
@@ -109,62 +103,55 @@ class ChatCompletionsChoiceMessageObject(BaseModel):
     function_call: Optional[ChatCompletionsChoiceMessageFunctionCallObject] = None
     audio: Optional[ChatCompletionsChoiceMessageAudioObject] = None
 
-    class Config:
-        extra: str = "allow"
-
 
 class ChatCompletionsChoiceLogprobsItemTopLogprobObject(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     token: Optional[str] = None
     logprob: Optional[int] = None
     bytes: Optional[List[int]] = None
 
-    class Config:
-        extra: str = "allow"
-
 
 class ChatCompletionsLogprobsItemObject(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     token: Optional[str] = None
     logprob: Optional[int] = None
     bytes: Optional[List[int]] = None
     content: Optional[List[ChatCompletionsChoiceLogprobsItemTopLogprobObject]] = None
 
-    class Config:
-        extra: str = "allow"
-
 
 class ChatCompletionsChoiceLogprobsObject(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     content: Optional[List[ChatCompletionsLogprobsItemObject]] = None
     refusal: Optional[List[ChatCompletionsLogprobsItemObject]] = None
 
-    class Config:
-        extra: str = "allow"
-
 
 class ChatCompletionsChoiceModelObject(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     ref: Optional[str] = None
     rank: Optional[int] = None
 
-    class Config:
-        extra: str = "allow"
-
 
 class ChatCompletionsChoiceErrorObject(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     message: Optional[str] = None
     code: Optional[str] = None
 
-    class Config:
-        extra: str = "allow"
-
 
 class ChatCompletionsChoiceLatencyObject(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     start: Optional[int] = Field(None, alias='start_latency')
     end: Optional[int] = Field(None, alias='end_latency')
 
-    class Config:
-        extra: str = "allow"
-
 
 class ChatCompletionsChoiceObject(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     finish_reason: Optional[str] = None
     index: Optional[int] = None
     message: Optional[ChatCompletionsChoiceMessageObject] = None
@@ -173,11 +160,10 @@ class ChatCompletionsChoiceObject(BaseModel):
     error: Optional[ChatCompletionsChoiceErrorObject] = None
     latency: Optional[ChatCompletionsChoiceLatencyObject] = None
 
-    class Config:
-        extra: str = "allow"
-
 
 class ChatCompletionsObject(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     id: Optional[str] = None
     choices: Optional[List[ChatCompletionsChoiceObject]] = None
     created: Optional[int] = None
@@ -186,9 +172,6 @@ class ChatCompletionsObject(BaseModel):
     system_fingerprint: Optional[str] = None
     object: Optional[str] = None
     usage: Optional[Dict[str, int]] = None
-
-    class Config:
-        extra: str = "allow"
 
 
 API_BASE_URL: str = "https://chat.infuzu.com/api"

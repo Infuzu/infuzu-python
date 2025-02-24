@@ -191,7 +191,7 @@ class ChatCompletionsObject(BaseModel):
         extra: str = "allow"
 
 
-API_BASE_URL = "https://chat.infuzu.com/api"
+API_BASE_URL: str = "https://chat.infuzu.com/api"
 
 
 def create_chat_completion(
@@ -219,13 +219,13 @@ def create_chat_completion(
     """
 
     if api_key is None:
-        api_key = os.environ.get("INFUZU_API_KEY")
+        api_key: str | None = os.environ.get("INFUZU_API_KEY")
         if api_key is None:
             raise ValueError(
                 "API key not provided and INFUZU_API_KEY environment variable not set."
             )
 
-    headers = {
+    headers: dict[str, str] = {
         "Content-Type": "application/json",
         "Infuzu-API-Key": api_key,
         "User-Agent": (
@@ -236,7 +236,7 @@ def create_chat_completion(
         )
     }
 
-    payload = {
+    payload: dict[str, any] = {
         "messages": [message.dict(by_alias=True) for message in messages],
     }
 
@@ -248,7 +248,7 @@ def create_chat_completion(
 
     try:
         with httpx.Client() as client:
-            response = client.post(
+            response: httpx.Response = client.post(
                 f"{API_BASE_URL}/v1/chat/completions",
                 headers=headers,
                 json=payload,

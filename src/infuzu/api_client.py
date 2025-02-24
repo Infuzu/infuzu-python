@@ -122,6 +122,5 @@ def create_chat_completion(
 
         response.raise_for_status()
         return response.json()
-
     except httpx.HTTPStatusError as e:
         raise InfuzuAPIError(e)

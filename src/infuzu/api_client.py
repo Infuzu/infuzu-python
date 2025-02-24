@@ -1,7 +1,9 @@
+import time
+import uuid
 import httpx
 import os
 from typing import (Optional, Dict, Union, List)
-from pydantic import (BaseModel, validator)
+from pydantic import (BaseModel, validator, Field)
 from .errors import InfuzuAPIError
 
 
@@ -62,6 +64,131 @@ class ChatCompletionsHandlerRequestMessage(BaseModel):
         return v
 
 
+class ChatCompletionsChoiceMessageAudioObject(BaseModel):
+    id: Optional[str] = None
+    expired_at: Optional[int] = None
+    data: Optional[str] = None
+    transcript: Optional[str] = None
+
+    class Config:
+        extra: str = "allow"
+
+
+class ChatCompletionsChoiceMessageFunctionCallObject(BaseModel):
+    name: Optional[str] = None
+    arguments: Optional[str] = None
+
+    class Config:
+        extra: str = "allow"
+
+
+class ChatCompletionsChoiceMessageToolCallFunctionObject(BaseModel):
+    name: Optional[str] = None
+    arguments: Optional[str] = None
+
+    class Config:
+        extra: str = "allow"
+
+
+class chatCompletionsChoiceMessageToolCallObject(BaseModel):
+    id: Optional[str] = None
+    type: Optional[str] = None
+    function: Optional[ChatCompletionsChoiceMessageToolCallFunctionObject] = None
+
+    class Config:
+        extra: str = "allow"
+
+
+class ChatCompletionsChoiceMessageObject(BaseModel):
+    content: Optional[str] = None
+    refusal: Optional[str] = None
+    tool_calls: Optional[List[chatCompletionsChoiceMessageToolCallObject]] = None
+    role: Optional[str] = None
+    function_call: Optional[ChatCompletionsChoiceMessageFunctionCallObject] = None
+    audio: Optional[ChatCompletionsChoiceMessageAudioObject] = None
+
+    class Config:
+        extra: str = "allow"
+
+
+class ChatCompletionsChoiceLogprobsItemTopLogprobObject(BaseModel):
+    token: Optional[str] = None
+    logprob: Optional[int] = None
+    bytes: Optional[List[int]] = None
+
+    class Config:
+        extra: str = "allow"
+
+
+class ChatCompletionsLogprobsItemObject(BaseModel):
+    token: Optional[str] = None
+    logprob: Optional[int] = None
+    bytes: Optional[List[int]] = None
+    content: Optional[List[ChatCompletionsChoiceLogprobsItemTopLogprobObject]] = None
+
+    class Config:
+        extra: str = "allow"
+
+
+class ChatCompletionsChoiceLogprobsObject(BaseModel):
+    content: Optional[List[ChatCompletionsLogprobsItemObject]] = None
+    refusal: Optional[List[ChatCompletionsLogprobsItemObject]] = None
+
+    class Config:
+        extra: str = "allow"
+
+
+class ChatCompletionsChoiceModelObject(BaseModel):
+    ref: Optional[str] = None
+    rank: Optional[int] = None
+
+    class Config:
+        extra: str = "allow"
+
+
+class ChatCompletionsChoiceErrorObject(BaseModel):
+    message: Optional[str] = None
+    code: Optional[str] = None
+
+    class Config:
+        extra: str = "allow"
+
+
+class ChatCompletionsChoiceLatencyObject(BaseModel):
+    start: Optional[int] = Field(None, alias='start_latency')
+    end: Optional[int] = Field(None, alias='end_latency')
+
+    class Config:
+        extra: str = "allow"
+
+
+class ChatCompletionsChoiceObject(BaseModel):
+    finish_reason: Optional[str] = None
+    index: Optional[int] = None
+    message: Optional[ChatCompletionsChoiceMessageObject] = None
+    logprobs: Optional[ChatCompletionsChoiceLogprobsObject] = None
+    model: Optional[ChatCompletionsChoiceModelObject] = None
+    error: Optional[ChatCompletionsChoiceErrorObject] = None
+    latency: Optional[ChatCompletionsChoiceLatencyObject] = None
+
+    class Config:
+        extra: str = "allow"
+
+
+class ChatCompletionsObject(BaseModel):
+    id: Optional[str] = None
+    choices: Optional[List[ChatCompletionsChoiceObject]] = None
+    created: Optional[int] = None
+    model: Optional[str] = None
+    service_tier: Optional[str] = None
+    system_fingerprint: Optional[str] = None
+    object: Optional[str] = None
+    usage: Optional[Dict[str, int]] = None
+
+    class Config:
+        extra: str = "allow"
+
+
 API_BASE_URL = "https://chat.infuzu.com/api"
 
 
@@ -69,7 +196,7 @@ def create_chat_completion(
         messages: List[ChatCompletionsHandlerRequestMessage],
         api_key: Optional[str] = None,
         model: Optional[Union[str, InfuzuModelParams]] = None,
-) -> Dict:
+) -> ChatCompletionsObject:
     """
     Creates a chat completion using the Infuzu API.
 
@@ -121,6 +248,13 @@ def create_chat_completion(
             )
 
         response.raise_for_status()
-        return response.json()
+        json_response: dict[str, any] = response.json()
+
+        json_response.setdefault('id', f"chatcmpl-{uuid.uuid4()}")
+        json_response.setdefault('created', int(time.time()))
+        json_response.setdefault('model', 'infuzu-ims')
+        json_response.setdefault('object', 'chat.completion')
+
+        return ChatCompletionsObject(**json_response)
     except httpx.HTTPStatusError as e:
         raise InfuzuAPIError(e)

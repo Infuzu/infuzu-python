@@ -1,4 +1,4 @@
-from src.infuzu import (create_chat_completion, ChatCompletionsHandlerRequestMessage)
+from src.infuzu import (create_chat_completion, ChatCompletionsHandlerRequestMessage, ChatCompletionsObject)
 from dotenv import load_dotenv
 
 
@@ -12,7 +12,7 @@ messages: list[ChatCompletionsHandlerRequestMessage] = [
 
 
 try:
-    response: dict[str, any] = create_chat_completion(messages=messages)
+    response: ChatCompletionsObject = create_chat_completion(messages=messages)
     print(response)
 except Exception as e:
     print(f"Error: {e}")

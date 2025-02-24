@@ -206,11 +206,11 @@ def create_chat_completion(
         messages: A list of message objects.
         api_key: Your Infuzu API key. If not provided, it will be read from the
                  INFUZU_API_KEY environment variable.
-        model:  The model to use for the chat completion. Can be a string (model name)
+        model: The model to use for the chat completion. Can be a string (model name)
                 or a InfuzuModelParams object for more advanced configuration.
 
     Returns:
-        A dictionary containing the JSON response from the API.
+        The ChatCompletionsObject Object
 
     Raises:
         ValueError: If the API key is not provided and the INFUZU_API_KEY

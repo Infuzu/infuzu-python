@@ -215,7 +215,7 @@ def create_chat_completion(
     Raises:
         ValueError: If the API key is not provided and the INFUZU_API_KEY
                     environment variable is not set.
-        httpx.HTTPStatusError: If the API request returns an error status code.
+        InfuzuAPIError: If the API request returns an error status code.
     """
 
     if api_key is None:

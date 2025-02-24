@@ -1,9 +1,11 @@
+import platform
 import time
 import uuid
 import httpx
 import os
 from typing import (Optional, Dict, Union, List)
 from pydantic import (BaseModel, validator, Field)
+from .utils import get_version
 from .errors import InfuzuAPIError
 
 
@@ -226,6 +228,12 @@ def create_chat_completion(
     headers = {
         "Content-Type": "application/json",
         "Infuzu-API-Key": api_key,
+        "User-Agent": (
+            f"infuzu-python/{get_version()} "
+            f"(Python {platform.python_version()}; "
+            f"httpx/{httpx.__version__}; "
+            f"{platform.system()} {platform.release()})"
+        )
     }
 
     payload = {

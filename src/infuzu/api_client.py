@@ -4,7 +4,7 @@ import uuid
 import httpx
 import os
 from typing import (Optional, Dict, Union, List)
-from pydantic import (BaseModel, validator, Field, ConfigDict)
+from pydantic import (BaseModel, validator, Field, ConfigDict, model_validator)
 from .utils import get_version
 from .errors import InfuzuAPIError
 
@@ -37,15 +37,13 @@ class ChatCompletionsRequestContentPart(BaseModel):
     image_url: Optional[str] = None
     input_audio: Optional[str] = None
 
-    @validator("text", always=True)
-    def check_content_fields(cls, value, values):
-        if "type" in values:
-            content_type = values["type"]
-            if content_type == "text" and value is None:
-                raise ValueError("Text must be provided when type is 'text'")
-            if content_type != "text" and value is not None:
-                raise ValueError("Text cannot be provided when type is not 'text'")
-        return value
+    @model_validator(mode='after')
+    def check_content_fields(self) -> 'ChatCompletionsRequestContentPart':
+        if self.type == "text" and self.text is None:
+            raise ValueError("Text must be provided when type is 'text'")
+        if self.type != "text" and self.text is not None:
+            raise ValueError("Text cannot be provided when type is not 'text'")
+        return self
 
 
 class ChatCompletionsHandlerRequestMessage(BaseModel):
@@ -55,11 +53,11 @@ class ChatCompletionsHandlerRequestMessage(BaseModel):
     role: str
     name: Optional[str] = None
 
-    @validator('role')
-    def role_must_be_valid(cls, v):
-        if v not in ('system', 'user', 'assistant'):
+    @model_validator(mode='after')
+    def role_must_be_valid(self) -> 'ChatCompletionsHandlerRequestMessage':
+        if self.role not in ('system', 'user', 'assistant'):
             raise ValueError('Role must be one of: system, user, assistant')
-        return v
+        return self
 
 
 class ChatCompletionsChoiceMessageAudioObject(BaseModel):
@@ -220,14 +218,14 @@ def create_chat_completion(
     }
 
     payload: dict[str, any] = {
-        "messages": [message.dict(by_alias=True) for message in messages],
+        "messages": [message.model_dump(by_alias=True) for message in messages],
     }
 
     if model:
         if isinstance(model, str):
             payload["model"] = model
         else:
-            payload["model"] = model.dict(by_alias=True)
+            payload["model"] = model.model_dump(by_alias=True)
 
     try:
         with httpx.Client() as client:

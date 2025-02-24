@@ -2,26 +2,24 @@ import logging
 from json import JSONDecodeError
 from typing import Optional
 import httpx
-from pydantic import BaseModel
+from pydantic import (BaseModel, ConfigDict)
 
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 
 class APIError(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     code: Optional[str] = None
     message: Optional[str] = None
-
-    class Config:
-        extra: str = "allow"
 
 
 class APIWarning(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     code: Optional[str] = None
     message: Optional[str] = None
-
-    class Config:
-        extra: str = "allow"
 
 
 class InfuzuAPIError(httpx.HTTPStatusError):

@@ -17,6 +17,7 @@ from .api_client import (
     ChatCompletionsObject,
 )
 from .errors import (InfuzuAPIError, APIWarning, APIError)
+from .utils import get_version
 
 
 __all__: list[str] = [
@@ -40,4 +41,6 @@ __all__: list[str] = [
     "InfuzuAPIError",
     "APIWarning",
     "APIError",
+
+    "get_version",
 ]
